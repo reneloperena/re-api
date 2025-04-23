@@ -1,0 +1,84 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.1.0
+  gcloud: circleci/gcp-cli@3.3.0
+
+jobs:
+  build-and-push:
+    docker:
+      - image: cimg/node:21.2.0
+    steps:
+      - checkout
+      - setup_remote_docker
+
+      # Authenticate with GitHub Packages
+      - run:
+          name: Authenticate GitHub Registry
+          command: |
+            echo "@vuhio:registry=https://npm.pkg.github.com/" > /tmp/npmrc
+            echo "//npm.pkg.github.com/:_authToken=$GITHUB_TOKEN" >> /tmp/npmrc
+
+      # Install build scripts
+      - run:
+          name: Install Build Scripts
+          command: sudo npm install --global @vuhio/build-scripts --userconfig /tmp/npmrc
+
+      # Extract Docker Image Name
+      - run:
+          name: Extract Docker Image Name and Version
+          command: |
+            IMAGE_NAME=$(get-image-info)
+            echo $IMAGE_NAME > /tmp/image_name
+
+      - gcloud/setup
+
+      - run:
+          name: Authenticate Docker with GCP
+          command: |
+            gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - run:
+          name: Build Docker Image
+          command: |
+            RAW_IMAGE_NAME=$(cat /tmp/image_name)
+            FULL_IMAGE_NAME="us-central1-docker.pkg.dev/$GOOGLE_PROJECT_ID/artifacts/$RAW_IMAGE_NAME"
+            echo $FULL_IMAGE_NAME > /tmp/full_image_name
+            docker build -t "$FULL_IMAGE_NAME" --secret id=npmrc,src=/tmp/npmrc .
+
+      - run:
+          name: Push Docker Image to Artifact Registry
+          command: |
+            IMAGE_NAME=$(cat /tmp/full_image_name)
+            docker push "$IMAGE_NAME"
+
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - full_image_name
+
+  hold-production:
+    type: approval
+
+  deploy-production:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+
+workflows:
+  build-deploy:
+    jobs:
+      - build-and-push:
+          context:
+            - ar-build
+          filters:
+            branches:
+              only: main
+      - hold-production:
+          requires:
+            - build-and-push
+      - deploy-production:
+          requires:
+            - hold-production

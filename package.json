@@ -1,0 +1,44 @@
+{
+  "name": "api",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --enable-source-maps --loader @vuhio/loader dist/server.js",
+    "dev": "nodemon",
+    "lint": "eslint . && prettier --check src",
+    "graphql:generate": "generate-types --schema ./schema.graphql --output src/graphql/types.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "6.6.0",
+    "@vuhio/core": "^1.0.0-alpha.5",
+    "@vuhio/graphql-types": "^1.0.0-alpha.4",
+    "@vuhio/loader": "^1.0.0-alpha.1",
+    "@vuhio/logging": "^1.0.0-alpha.2",
+    "@vuhio/tsconfig": "^1.0.0",
+    "convict": "^6.2.4",
+    "firebase-admin": "^13.1.0",
+    "graphql": "^16.8.2",
+    "prisma": "^6.6.0"
+  },
+  "devDependencies": {
+    "@types/convict": "^6.1.6",
+    "@types/node": "^20.16.1",
+    "@vuhio/eslint-config": "1.0.0-alpha.4",
+    "eslint": "^9.25.0",
+    "nodemon": "^3.1.3",
+    "prettier": "^3.3.2",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.6.3",
+    "typescript": "^5.5.4"
+  }
+}

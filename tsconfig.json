@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": ["./node_modules/@vuhio/tsconfig/node-app.json"],
+  "compilerOptions": {
+    "target": "ES2022",
+    "rootDir": "./src",
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./dist",
+    "removeComments": false,
+    "sourceMap": true
+  },
+  "include": ["src/**/*.ts", "src/api/graphql/graphql.d.ts"],
+  "exclude": ["node_modules"],
+  "ts-node": {
+    "experimentalSpecifierResolution": "node",
+    "transpileOnly": true,
+    "esm": true
+  }
+}

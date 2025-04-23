@@ -1,0 +1,218 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/persistance/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id                   String   @id @default(uuid())
+  name                 String
+  seatLimit            Int?
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  createdAt            DateTime @default(now())
+
+  buildings          Building[]
+  Model              Model[]
+  Apartment          Apartment[]
+  PaymentPlan        PaymentPlan[]
+  PaymentMilestone   PaymentMilestone[]
+  ApartmentVersion   ApartmentVersion[]
+  BuildingVersion    BuildingVersion[]
+  ModelVersion       ModelVersion[]
+  PaymentPlanVersion PaymentPlanVersion[]
+}
+
+model Building {
+  id        String    @id @default(uuid())
+  name      String
+  address   String?
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId String
+
+  apartments   Apartment[]
+  models       Model[]
+  paymentPlans PaymentPlan[]
+  versions     BuildingVersion[]
+
+  @@index([clientId])
+}
+
+model Model {
+  id           String    @id @default(uuid())
+  name         String
+  description  String?
+  area         Float
+  bedrooms     Int
+  bathrooms    Int
+  parkingSpots Int?
+  createdAt    DateTime @default(now())
+  deletedAt    DateTime?
+
+  building   Building @relation(fields: [buildingId], references: [id])
+  buildingId String
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId String
+
+  apartments Apartment[]
+  versions   ModelVersion[]
+
+  @@index([buildingId])
+  @@index([clientId])
+}
+
+model Apartment {
+  id          String          @id @default(uuid())
+  code        String
+  floor       Int
+  orientation String?
+  view        String?
+  price       Float
+  status      ApartmentStatus
+  deletedAt   DateTime?
+
+  building   Building @relation(fields: [buildingId], references: [id])
+  buildingId String
+
+  model   Model  @relation(fields: [modelId], references: [id])
+  modelId String
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId String
+
+  versions ApartmentVersion[]
+
+  @@index([buildingId])
+  @@index([modelId])
+  @@index([clientId])
+}
+
+enum ApartmentStatus {
+  AVAILABLE
+  RESERVED
+  SOLD
+}
+
+model PaymentPlan {
+  id        String          @id @default(uuid())
+  name      String
+  type      PaymentPlanType
+  deletedAt DateTime?
+
+  building   Building @relation(fields: [buildingId], references: [id])
+  buildingId String
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId String
+
+  structure PaymentMilestone[]
+  versions  PaymentPlanVersion[]
+
+  @@index([buildingId])
+  @@index([clientId])
+}
+
+model PaymentMilestone {
+  id         String    @id @default(uuid())
+  label      String
+  percentage Float
+  dueAt      DateTime?
+
+  paymentPlan   PaymentPlan @relation(fields: [paymentPlanId], references: [id])
+  paymentPlanId String
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId String
+
+  @@index([paymentPlanId])
+  @@index([clientId])
+}
+
+enum PaymentPlanType {
+  FIXED_SCHEDULE
+  MILESTONE
+}
+
+model ApartmentVersion {
+  id          String    @id @default(uuid())
+  apartment   Apartment @relation(fields: [apartmentId], references: [id])
+  apartmentId String
+
+  userId    String
+  version   Int
+  message   String?
+  data      Json
+  createdAt DateTime @default(now())
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId String
+
+  @@index([apartmentId, version])
+  @@index([userId])
+  @@index([clientId])
+}
+
+model BuildingVersion {
+  id         String   @id @default(uuid())
+  building   Building @relation(fields: [buildingId], references: [id])
+  buildingId String
+
+  userId    String
+  version   Int
+  message   String?
+  data      Json
+  createdAt DateTime @default(now())
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId String
+
+  @@index([buildingId, version])
+  @@index([userId])
+  @@index([clientId])
+}
+
+model ModelVersion {
+  id      String @id @default(uuid())
+  model   Model  @relation(fields: [modelId], references: [id])
+  modelId String
+
+  userId    String
+  version   Int
+  message   String?
+  data      Json
+  createdAt DateTime @default(now())
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId String
+
+  @@index([modelId, version])
+  @@index([userId])
+  @@index([clientId])
+}
+
+model PaymentPlanVersion {
+  id            String      @id @default(uuid())
+  paymentPlan   PaymentPlan @relation(fields: [paymentPlanId], references: [id])
+  paymentPlanId String
+
+  userId    String
+  version   Int
+  message   String?
+  data      Json
+  createdAt DateTime @default(now())
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId String
+
+  @@index([paymentPlanId, version])
+  @@index([userId])
+  @@index([clientId])
+}

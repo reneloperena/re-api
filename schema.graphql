@@ -1,0 +1,227 @@
+type Query {
+  me: User!
+  building(id: ID!): Building
+  apartment(id: ID!): Apartment
+  model(id: ID!): Model
+  paymentPlan(id: ID!): PaymentPlan
+  buildings(pagination: PaginationFilter): BuildingConnection!
+  apartments(pagination: PaginationFilter): ApartmentConnection!
+  models(pagination: PaginationFilter): ModelConnection!
+  paymentPlans(pagination: PaginationFilter): PaymentPlanConnection!
+  organizations(pagination: PaginationFilter): OrganizationConnection!
+  users(pagination: PaginationFilter): UserConnection!
+}
+
+input BuildingInput {
+  name: String!
+}
+
+input ModelInput {
+  name: String!
+  description: String
+  area: Float!
+  bedrooms: Int!
+  bathrooms: Int!
+  parkingSpots: Int
+}
+
+input ApartmentInput {
+  code: String!
+  floor: Int!
+  price: Float!
+  status: ApartmentStatus!
+  view: String
+  orientation: String
+  modelId: ID!
+}
+
+input PaymentPlanInput {
+  name: String!
+  type: PaymentPlanType!
+  structure: [PaymentMilestoneInput!]!
+}
+
+input PaymentMilestoneInput {
+  label: String!
+  percentage: Float!
+  dueAt: DateTime
+}
+
+enum PaymentPlanType {
+  MILESTONE
+}
+
+type Mutation {
+  requestLogin(phoneNumber: String!): Boolean
+  verifyLogin(phoneNumber: String!, otp: String!): AuthPayload
+  createBuilding(input: BuildingInput!): Building!
+  updateBuilding(id: ID!, input: BuildingInput!): Building!
+  deleteBuilding(id: ID!): Boolean!
+  createModel(buildingId: ID!, input: ModelInput!): Model!
+  updateModel(id: ID!, input: ModelInput!): Model!
+  deleteModel(id: ID!): Boolean!
+  createApartment(buildingId: ID!, input: ApartmentInput!): Apartment!
+  updateApartment(id: ID!, input: ApartmentInput!): Apartment!
+  deleteApartment(id: ID!): Boolean!
+  addPaymentPlan(buildingId: ID!, input: PaymentPlanInput!): PaymentPlan!
+  updatePaymentPlan(paymentPlanId: ID!, input: PaymentPlanInput!): PaymentPlan!
+  deletePaymentPlan(paylmentPlanId: ID!): Boolean!
+}
+
+type AuthPayload {
+  token: String!
+  user: User
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+type User implements Node @key(fields: "id") {
+  id: ID!
+  phoneNumber: String!
+  createdAt: DateTime!
+  tenant: Organization
+  role: UserRole!
+}
+
+type Organization implements Node {
+  id: ID!
+  name: String!
+  createdAt: DateTime!
+  seatLimit: Int
+  users: [User!]!
+  buildings: [Building!]!
+}
+
+type Building implements Node {
+  id: ID!
+  name: String!
+  address: Address
+  createdAt: DateTime!
+  organization: Organization!
+  models: [Model!]!
+  apartments: [Apartment!]!
+  paymentPlans: [PaymentPlan!]!
+}
+
+type Address implements Node {
+  id: ID!
+  line1: String!
+  line2: String
+  city: String!
+  state: String!
+  country: String!
+  zipCode: String!
+}
+
+type Model implements Node {
+  id: ID!
+  name: String!
+  description: String
+  area: Float!
+  bedrooms: Int!
+  bathrooms: Int!
+  parkingSpots: Int
+  createdAt: DateTime!
+  building: Building!
+}
+
+type Apartment implements Node {
+  id: ID!
+  code: String!
+  floor: Int!
+  price: Float!
+  status: ApartmentStatus!
+  view: String
+  orientation: String
+  model: Model!
+  building: Building!
+}
+
+enum ApartmentStatus {
+  AVAILABLE
+  RESERVED
+  SOLD
+}
+
+type PaymentPlan implements Node {
+  id: ID!
+  name: String!
+  type: PaymentPlanType!
+  structure: [PaymentMilestone!]!
+}
+
+enum PaymentPlanType {
+  MILESTONE
+  FIXED_SCHEDULE
+}
+
+type PaymentMilestone {
+  label: String!
+  percentage: Float!
+  dueAt: DateTime
+}
+
+type BuildingEdge implements Edge {
+  node: Building!
+  cursor: ConnectionCursor!
+}
+
+type BuildingConnection implements Connection {
+  edges: [BuildingEdge!]!
+  pageInfo: PageInfo!
+}
+
+type ApartmentEdge implements Edge {
+  node: Apartment!
+  cursor: ConnectionCursor!
+}
+
+type ApartmentConnection implements Connection {
+  edges: [ApartmentEdge!]!
+  pageInfo: PageInfo!
+}
+
+type ModelEdge implements Edge {
+  node: Model!
+  cursor: ConnectionCursor!
+}
+
+type ModelConnection implements Connection {
+  edges: [ModelEdge!]!
+  pageInfo: PageInfo!
+}
+
+type PaymentPlanEdge implements Edge {
+  node: PaymentPlan!
+  cursor: ConnectionCursor!
+}
+
+type PaymentPlanConnection implements Connection {
+  edges: [PaymentPlanEdge!]!
+  pageInfo: PageInfo!
+}
+
+type OrganizationEdge implements Edge {
+  node: Organization!
+  cursor: ConnectionCursor!
+}
+
+type OrganizationConnection implements Connection {
+  edges: [OrganizationEdge!]!
+  pageInfo: PageInfo!
+}
+
+type UserEdge implements Edge {
+  node: User!
+  cursor: ConnectionCursor!
+}
+
+type UserConnection implements Connection {
+  edges: [UserEdge!]!
+  pageInfo: PageInfo!
+}
