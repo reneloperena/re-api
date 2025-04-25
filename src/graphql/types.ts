@@ -80,13 +80,21 @@ export type AuthPayload = {
 export type Building = Node & {
   __typename?: 'Building';
   address?: Maybe<Address>;
-  apartments: Array<Apartment>;
+  apartments: ApartmentConnection;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
-  models: Array<Model>;
+  models: ModelConnection;
   name: Scalars['String']['output'];
-  organization: Organization;
-  paymentPlans: Array<PaymentPlan>;
+};
+
+
+export type BuildingApartmentsArgs = {
+  pagination?: InputMaybe<PaginationFilter>;
+};
+
+
+export type BuildingModelsArgs = {
+  pagination?: InputMaybe<PaginationFilter>;
 };
 
 export type BuildingConnection = Connection & {
@@ -251,12 +259,12 @@ export type Node = {
 
 export type Organization = Node & {
   __typename?: 'Organization';
-  buildings: Array<Building>;
+  buildings: BuildingConnection;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   seatLimit?: Maybe<Scalars['Int']['output']>;
-  users: Array<User>;
+  users: UserConnection;
 };
 
 export type OrganizationConnection = Connection & {
@@ -418,6 +426,7 @@ export type UserEdge = Edge & {
 
 export enum UserRole {
   Admin = 'ADMIN',
+  Anonymous = 'ANONYMOUS',
   Editor = 'EDITOR',
   Owner = 'OWNER',
   Viewer = 'VIEWER'
@@ -635,13 +644,11 @@ export type AuthPayloadResolvers<ContextType = any, ParentType extends Resolvers
 
 export type BuildingResolvers<ContextType = any, ParentType extends ResolversParentTypes['Building'] = ResolversParentTypes['Building']> = {
   address?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType>;
-  apartments?: Resolver<Array<ResolversTypes['Apartment']>, ParentType, ContextType>;
+  apartments?: Resolver<ResolversTypes['ApartmentConnection'], ParentType, ContextType, Partial<BuildingApartmentsArgs>>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  models?: Resolver<Array<ResolversTypes['Model']>, ParentType, ContextType>;
+  models?: Resolver<ResolversTypes['ModelConnection'], ParentType, ContextType, Partial<BuildingModelsArgs>>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  organization?: Resolver<ResolversTypes['Organization'], ParentType, ContextType>;
-  paymentPlans?: Resolver<Array<ResolversTypes['PaymentPlan']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -729,12 +736,12 @@ export type NodeResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type OrganizationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']> = {
-  buildings?: Resolver<Array<ResolversTypes['Building']>, ParentType, ContextType>;
+  buildings?: Resolver<ResolversTypes['BuildingConnection'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   seatLimit?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
+  users?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

@@ -78,6 +78,7 @@ enum UserRole {
   ADMIN
   EDITOR
   VIEWER
+  ANONYMOUS
 }
 
 type User implements Node @key(fields: "id") {
@@ -93,8 +94,8 @@ type Organization implements Node {
   name: String!
   createdAt: DateTime!
   seatLimit: Int
-  users: [User!]!
-  buildings: [Building!]!
+  users: UserConnection!
+  buildings: BuildingConnection!
 }
 
 type Building implements Node {
@@ -102,10 +103,8 @@ type Building implements Node {
   name: String!
   address: Address
   createdAt: DateTime!
-  organization: Organization!
-  models: [Model!]!
-  apartments: [Apartment!]!
-  paymentPlans: [PaymentPlan!]!
+  models(pagination: PaginationFilter): ModelConnection!
+  apartments(pagination: PaginationFilter): ApartmentConnection!
 }
 
 type Address implements Node {
