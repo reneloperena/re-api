@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@prisma/client": "6.6.0",
-    "@vuhio/core": "^1.0.0-alpha.8",
+    "@vuhio/core": "^1.0.0-alpha.9",
     "@vuhio/graphql-types": "^1.0.0-alpha.4",
     "@vuhio/loader": "^1.0.0-alpha.1",
     "@vuhio/logging": "^1.0.0-alpha.2",

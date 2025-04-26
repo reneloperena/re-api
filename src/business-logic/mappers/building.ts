@@ -2,24 +2,22 @@ import {
   Building as GQLBuilding,
   BuildingInput as GQLBuildingInput,
 } from "../../graphql/types";
-import { Building as PrismaBuilding, Prisma } from "../../persistance/prisma";
-export type BuildingDTO = Pick<
-  GQLBuilding,
-  "id" | "name" | "createdAt" | "address"
->;
+import { Building as PrismaBuilding, Prisma } from "@prisma/client";
 
-export function mapBuilding(building: PrismaBuilding): BuildingDTO {
+export function mapBuilding(building: PrismaBuilding): GQLBuilding {
   return {
     id: building.id,
     name: building.name,
     createdAt: building.createdAt,
     address: null,
+    apartments: {} as any,
+    models: {} as any,
+    __typename: "Building",
   };
 }
 
 export function mapBuildingCreateInput(
   building: GQLBuildingInput,
-  message: string,
   context: { userId: string; clientId: string }
 ): Prisma.BuildingCreateInput & { userId: string; message?: string } {
   return {
@@ -29,14 +27,7 @@ export function mapBuildingCreateInput(
         id: context.clientId,
       },
     },
-    message,
+    message: "Create",
     userId: context.userId,
   };
-}
-
-export function mapBuildingUpdateInput(
-  building: GQLBuildingInput,
-  context: { userId: string; clientId: string }
-): Prisma.BuildingUpdateInput & { userId: string; message?: string } {
-  return {};
 }

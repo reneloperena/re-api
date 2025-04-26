@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from "./prisma";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { createScopedClientMiddleware } from "./middleware/scopedClient";
 
 export const createApartmentRepository = (clientId: string) => {

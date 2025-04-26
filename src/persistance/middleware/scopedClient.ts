@@ -1,4 +1,4 @@
-import { Prisma } from "../prisma";
+import { Prisma } from "@prisma/client";
 
 const MODELS_WITH_CLIENT_AND_DELETION = new Set([
   "Building",

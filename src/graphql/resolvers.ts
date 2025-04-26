@@ -5,13 +5,29 @@ import {
   requestLogin,
   verifyLogin,
 } from "../business-logic/authentication";
-import { createBuilding, updateBuilding } from "../business-logic/building";
+import {
+  createBuilding,
+  findBuildings,
+  getBuilding,
+  getBuildingApartments,
+  getBuildingModels,
+  updateBuilding,
+} from "../business-logic/building";
 import { createAparment, updateApartment } from "../business-logic/apartment";
 import { createModel, updateModel } from "../business-logic/model";
 
 const resolvers: Resolvers<Context> = {
   Query: {
     me: (_parent, _args, context, _info) => getMe(context),
+    building: (_parent, args, context, _info) => getBuilding(args.id, context),
+    buildings: (_parent, args, context, _info) =>
+      findBuildings(args.pagination, context),
+  },
+  Building: {
+    apartments: (parent, args, context, _info) =>
+      getBuildingApartments(parent.id, args.pagination, context),
+    models: (parent, args, context, _info) =>
+      getBuildingModels(parent.id, args.pagination, context),
   },
   Mutation: {
     requestLogin: (_parent, args, context, _info) =>

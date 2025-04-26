@@ -1,5 +1,5 @@
 import { HealthCheckResult } from "@vuhio/core/dist/health";
-import { PrismaClient } from "./prisma";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 

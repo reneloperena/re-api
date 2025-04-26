@@ -2255,10 +2255,10 @@
   resolved "https://npm.pkg.github.com/download/@vuhio/build-scripts/1.0.3/ab7d692f1dd01faae98dd3531a0071186e450091#ab7d692f1dd01faae98dd3531a0071186e450091"
   integrity sha512-3zpkEIPGUjyRdtLC+ngPC2pYVlg7L6RkeDvkR7eduXnkRlQmFI2km8rx98rFYTkId/e1Urc32cxA+w4hRI9XuQ==
 
-"@vuhio/core@^1.0.0-alpha.8":
-  version "1.0.0-alpha.8"
-  resolved "https://npm.pkg.github.com/download/@vuhio/core/1.0.0-alpha.8/b1467668bf3ff7c00be928dba648c11e476cd3b3#b1467668bf3ff7c00be928dba648c11e476cd3b3"
-  integrity sha512-UX6fnkDpecOP95gC5x7YQTu5z1fVC3Dw2Qs5p9lcddL89H3IEujKPh9xkA3hM0jJyh6CJunfly2LqeosLHB0iA==
+"@vuhio/core@^1.0.0-alpha.9":
+  version "1.0.0-alpha.9"
+  resolved "https://npm.pkg.github.com/download/@vuhio/core/1.0.0-alpha.9/59e26c6ee3fcf1947508820cf44f918ee6856108#59e26c6ee3fcf1947508820cf44f918ee6856108"
+  integrity sha512-Rupw8u2TL/a8iR6eQUZQv+NfQ2ITvARftRH1Eddsj/oRclQMnPVoRWoeZKtP3j+e8/bU3W298c61IH7K6BwnFA==
   dependencies:
     "@apollo/server" "^4.11.3"
     "@apollo/subgraph" "^2.8.0"

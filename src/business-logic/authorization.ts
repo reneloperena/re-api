@@ -17,6 +17,13 @@ export function checkPermissions(
 ): void {
   const userRank = roleRank[context.role];
   const requiredRank = roleRank[required];
+  if (context.role === UserRole.Anonymous) {
+    throw new GraphQLError(`Must be logged in.`, {
+      extensions: {
+        code: "FORBIDDEN",
+      },
+    });
+  }
 
   if (userRank < requiredRank) {
     throw new GraphQLError(
